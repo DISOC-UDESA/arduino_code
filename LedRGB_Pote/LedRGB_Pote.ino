@@ -14,11 +14,17 @@ void loop() {
   int PoteValue = analogRead(A0);
   if (PoteValue <= 341) {
     digitalWrite(LED_RGB_R, LOW);
+    digitalWrite(LED_RGB_G, HIGH);
+    digitalWrite(LED_RGB_B, HIGH);
   }
   if (PoteValue > 341 && PoteValue <= 682) {
+    digitalWrite(LED_RGB_R, HIGH);
     digitalWrite(LED_RGB_G, LOW);
+    digitalWrite(LED_RGB_B, HIGH);
   }
   if (PoteValue > 682) {
+    digitalWrite(LED_RGB_R, HIGH);
+    digitalWrite(LED_RGB_G, HIGH);
     digitalWrite(LED_RGB_B, LOW);
   }
 }
