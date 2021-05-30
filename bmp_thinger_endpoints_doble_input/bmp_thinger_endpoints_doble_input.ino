@@ -23,7 +23,8 @@ BMx280I2C bmx280(I2C_ADDRESS);
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
+
 
   Wire.begin();
   if (!bmx280.begin())
@@ -41,9 +42,12 @@ void setup() {
 //  thing["temperatura"] >> outputValue(bmx280.getTemperature());
 
  thing["BMP"] >> [](pson& out){
-    out["temperatura"] = bmx280.getTemperature();
-    out["presion"] = bmx280.getPressure();
+    out["temperatura"] = random(0, 100);
+    out["presion"] = random(400, 500);
   };
+
+    thing["led"] << digitalPin(LED_BUILTIN);
+
 
 }
 
@@ -53,15 +57,7 @@ void loop() {
 //  Serial.print("Temperatura: "); Serial.println(bmx280.getTemperature());
 //  Serial.print("Presión: "); Serial.println(bmx280.getPressure());
 
-  do
-  {
-    delay(100);
-  } while (!bmx280.hasValue());
-  if (bmx280.getTemperature() >= MaxTemp) {
-    digitalWrite(LED, HIGH);
-  } else {
-    digitalWrite(LED, LOW);
-  }
+  
 
 
 
