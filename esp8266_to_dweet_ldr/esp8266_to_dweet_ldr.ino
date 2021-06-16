@@ -4,14 +4,16 @@
  */
 
 #include <ESP8266WiFi.h>
-const int AnalogIn  = A0;
+#define ldrPin A0
 
 const char* ssid     = "FB912E";
 const char* password = "100381192";
 
 const char* host = "www.dweet.io";
 const char* thing  = "wemos_ortuzar";
-const char* thing_content = "temp";
+const char* thing_content = "light";
+
+int ldrValue=0;
 
 void setup() {
   Serial.begin(115200);
@@ -37,12 +39,10 @@ void setup() {
   Serial.println(WiFi.localIP());
 }
 
-int value = 0;
 
 void loop() {
-  delay(1000);
-  //value = analogRead(AnalogIn);
-  value= random(50, 350);
+  delay(60000); //Delay cada 1 minnvidita gt1060
+  ldrValue = analogRead(ldrPin); // read the value from the sensor
 
   Serial.print("connecting to ");
   Serial.println(host);
@@ -61,7 +61,7 @@ void loop() {
   url += "?";
   url += thing_content;
   url += "=";
-  url += value;
+  url += ldrValue;
   
   Serial.print("Requesting URL: ");
   Serial.println(url);

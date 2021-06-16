@@ -1,7 +1,7 @@
 /*
 
   TOMA DATOS DE DWEET Y MUESTRA EN PANTALLA
-  
+
 */
 
 #include <Arduino.h>
@@ -15,6 +15,14 @@
 #include <WiFiClient.h>
 
 ESP8266WiFiMulti WiFiMulti;
+
+#define led_r_pin 2
+#define led_g_pin 5
+#define led_b_pin 4
+
+int rValue = 0;
+int gValue = 0;
+int bValue = 0;
 
 const char* ssid = "FB912E";
 const char* password = "100381192";
@@ -90,8 +98,11 @@ void loop() {
           int with_0_content_light = with_0["content"]["light"]; // 238
 
           Serial.println(with_0_content_light);
-
-
+          if (with_0_content_light > 0) {
+            analogWrite(led_r_pin, with_0_content_light);
+            analogWrite(led_g_pin, with_0_content_light);
+            analogWrite(led_b_pin, with_0_content_light);
+          }
         }
       } else {
         Serial.printf("[HTTP] GET... failed, error: % s\n", http.errorToString(httpCode).c_str());
@@ -103,5 +114,5 @@ void loop() {
     }
   }
 
-  delay(10000);
+  delay(1000);
 }
