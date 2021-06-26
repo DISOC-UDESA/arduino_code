@@ -16,8 +16,8 @@
 
 ESP8266WiFiMulti WiFiMulti;
 
-const char* ssid = "FB912E";
-const char* password = "100381192";
+const char* ssid = "+CODE";
+const char* password = "pluscodepass";
 
 void setup() {
 
