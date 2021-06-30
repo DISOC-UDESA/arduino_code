@@ -1,25 +1,12 @@
-/*
-  Arduino-MAX30100 oximetry / heart rate integrated sensor library
-  Copyright (C) 2016  OXullo Intersecans <x@brainrapers.org>
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+#include <ThingerESP8266.h>
 #include <Wire.h>
 #include "MAX30100_PulseOximeter.h"
 
-#define REPORTING_PERIOD_MS     1000
+#define REPORTING_PERIOD_MS     10000
+#define REPORTING_TO_DEVICE     60000
+#define LED_On_Period 100
+
+int LED_PERIOD_MS = 0;
 
 // PulseOximeter is the higher level interface to the sensor
 // it offers:
@@ -29,23 +16,27 @@
 PulseOximeter pox;
 
 uint32_t tsLastReport = 0;
+uint32_t tsLastReportDevice = 0;
+uint32_t tsLastLEDOn = 0;
 
 #define LED13 13
 
-//#define SDA 4
+#define USERNAME "Jazmin"
+#define DEVICE_ID "Casa_Corazon_1"
+#define DEVICE_CREDENTIAL "#S37!whoZBDdV1h4"
 
-//#define SCL 5
+#define SSID "CLARO5"
+#define SSID_PASSWORD "14602788"
+
+ThingerESP8266 thing(USERNAME, DEVICE_ID, DEVICE_CREDENTIAL);
+
+int bpm_Mio;
+int bpm_Externo;
 
 // Callback (registered below) fired when a pulse is detected
 void onBeatDetected()
 {
   Serial.println("Beat!");
-
-  digitalWrite(LED13, HIGH);
-
-  delay (50);
-
-  digitalWrite(LED13, LOW);
 }
 
 void setup()
@@ -56,11 +47,6 @@ void setup()
 
   Serial.print("Initializing pulse oximeter..");
 
-  //Wire.begin (SDA, SCL);
-
-  // Initialize the PulseOximeter instance
-  // Failures are generally due to an improper I2C wiring, missing power supply
-  // or wrong target chip
   if (!pox.begin()) {
     Serial.println("FAILED");
     for (;;);
@@ -68,30 +54,60 @@ void setup()
     Serial.println("SUCCESS");
   }
 
-  // The default current for the IR LED is 50mA and it could be changed
-  //   by uncommenting the following line. Check MAX30100_Registers.h for all the
-  //   available options.
-  // pox.setIRLedCurrent(MAX30100_LED_CURR_7_6MA);
-
-  // Register a callback for the beat detection
   pox.setOnBeatDetectedCallback(onBeatDetected);
+
+  thing["Corazon_Externo"] << [](pson & in) {
+    bpm_Externo = in["bpm_Mio"];
+  };
+  thing["Corazon_Mio"] >> [](pson & out) {
+    out["bpm_Mio"] = bpm_Mio;
+  };
 }
 
 void loop()
 {
   // Make sure to call update as fast as possible
   pox.update();
+  thing.handle();
 
-  // Asynchronously dump heart rate and oxidation levels to the serial
-  // For both, a value of 0 means "invalid"
   if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
     Serial.print("Heart rate:");
-    Serial.print(pox.getHeartRate());
-    Serial.print("bpm / SpO2:");
-    Serial.print(pox.getSpO2());
-    Serial.println("%");
+    Serial.print(bpm_Mio = pox.getHeartRate());
+    Serial.print("bpm");
 
     tsLastReport = millis();
 
+    Serial.println(LED_PERIOD_MS);
+
+    if (bpm_Externo >= 1) {
+      LED_PERIOD_MS = (60 / bpm_Externo) * 1000;
+    } else {
+      LED_PERIOD_MS = 0;
+    }
   }
+  if (millis() - tsLastReportDevice > REPORTING_TO_DEVICE)
+  {
+    thing.call_device("Casa_Corazon_2", "Corazon_Externo", thing["Corazon_Mio"]);
+    tsLastReportDevice = millis();
+  }
+  if (millis() - tsLastLEDOn > LED_PERIOD_MS && LED_PERIOD_MS > 0)
+  {
+    PrendoLed();
+    tsLastLEDOn = millis();
+  }
+  if (millis() - tsLastLEDOn > LED_On_Period && LED_PERIOD_MS > 0)
+  {
+    ApagoLed();
+    tsLastLEDOn = millis();
+  }
+}
+
+void PrendoLed() {
+  digitalWrite(LED13, HIGH);
+  Serial.println("prendiendo");
+
+}
+
+void ApagoLed() {
+  digitalWrite(LED13, LOW);
 }
