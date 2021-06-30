@@ -1,6 +1,10 @@
 /*
 
+<<<<<<< HEAD
   TOMA DATOS DE AQI Y MUESTRA EN PANTALLA PM10 y PM25
+=======
+  TOMA DATOS DE OPENWEATHER Y MUESTRA EN PANTALLA WIND Y TEMP
+>>>>>>> c46534796480ea82f220fddd0843a1ab63ae36ec
 
 */
 
@@ -16,8 +20,13 @@
 
 ESP8266WiFiMulti WiFiMulti;
 
+<<<<<<< HEAD
 const char* ssid = "+CODE";
 const char* password = "pluscodepass";
+=======
+const char* ssid = "FB912E";
+const char* password = "100381192";
+>>>>>>> c46534796480ea82f220fddd0843a1ab63ae36ec
 
 void setup() {
 
@@ -61,17 +70,33 @@ void loop() {
 
         // file found at server
         if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+<<<<<<< HEAD
           String payload = http.getString();
           Serial.print("los datos son:::  ");
           Serial.println(payload);
+=======
+          String input = http.getString();
+          Serial.print("los datos son:::  ");
+          Serial.println(input);
+>>>>>>> c46534796480ea82f220fddd0843a1ab63ae36ec
 
           //PARSE JSON
           // Stream& input;
 
 
+<<<<<<< HEAD
           StaticJsonDocument<1024> doc;
 
           DeserializationError error = deserializeJson(doc, payload);
+=======
+          StaticJsonDocument<64> filter;
+          filter["main"]["temp"] = true;
+          filter["wind"]["speed"] = true;
+
+          StaticJsonDocument<128> doc;
+
+          DeserializationError error = deserializeJson(doc, input, DeserializationOption::Filter(filter));
+>>>>>>> c46534796480ea82f220fddd0843a1ab63ae36ec
 
           if (error) {
             Serial.print(F("deserializeJson() failed: "));
@@ -79,6 +104,7 @@ void loop() {
             return;
           }
 
+<<<<<<< HEAD
           float coord_lon = doc["coord"]["lon"]; // -58.45
           float coord_lat = doc["coord"]["lat"]; // -34.6
 
@@ -122,6 +148,11 @@ void loop() {
           int cod = doc["cod"]; // 200
 
   
+=======
+          float main_temp = doc["main"]["temp"]; // 7.28
+
+          float wind_speed = doc["wind"]["speed"]; // 5.14
+>>>>>>> c46534796480ea82f220fddd0843a1ab63ae36ec
 
 
 
