@@ -76,7 +76,7 @@ void loop() {
     Serial.print("cm ");
 
     int control = map(sonar[i].ping_cm(), 10, 40, 0, 127); //escala el valor a un entero entre 0 y 127
-    //controlChange(0, i, control); //usa la funcion de enviar cambios de control
+    controlChange(0, i, control); //usa la funcion de enviar cambios de control
     delay(10); //espera 10 ms
   }
   Serial.println();
