@@ -13,9 +13,9 @@
 #define SONAR_NUM 2      // Number of sensors.
 #define MAX_DISTANCE 50 // Maximum distance (in cm) to ping.
 
-NewPing sonar[SONAR_NUM] = {   // Sensor object array.
-  NewPing(4, 5, MAX_DISTANCE), // D1, D2 Each sensor's trigger pin, echo pin, and max distance to ping.
-  NewPing(6, 7, MAX_DISTANCE) // D7, D6
+NewPing sonar[SONAR_NUM] = {  
+  NewPing(4, 5, MAX_DISTANCE), 
+  NewPing(6, 7, MAX_DISTANCE) 
 };
 
 #ifndef _BV
