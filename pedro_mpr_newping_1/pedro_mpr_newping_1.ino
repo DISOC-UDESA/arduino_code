@@ -1,12 +1,14 @@
 
 /*
- * Este código:
- * analiza 8 sensores del MPR y los asigna a las notas 49 a 56 con noteOn y noteOff
- * recorre dos objetos newping y los mapea con controlChange
- */
+   Este código:
+   analiza 8 sensores del MPR y los asigna a las notas 49 a 56 con noteOn y noteOff
+   recorre dos objetos newping y los mapea con controlChange
+*/
 #include <Wire.h>
 #include "Adafruit_MPR121.h"
 #include "MIDIUSB.h"
+#include <NewPing.h>
+
 
 #define SONAR_NUM 2      // Number of sensors.
 #define MAX_DISTANCE 100 // Maximum distance (in cm) to ping.
@@ -50,7 +52,6 @@ void setup() {
 
 void loop() {
 
-
   currtouched = cap.touched();
 
   // MPR121
@@ -79,34 +80,34 @@ void loop() {
     delay(10); //espera 10 ms
   }
   Serial.println();
-}
 
 
-// reset our state
-lasttouched = currtouched;
 
-// comment out this line for detailed data from the sensor!
-return;
+  // reset our state
+  lasttouched = currtouched;
 
-// debugging info, what
-/*
-  Serial.print("\t\t\t\t\t\t\t\t\t\t\t\t\t 0x"); Serial.println(cap.touched(), HEX);
-  Serial.print("Filt: ");
-  for (uint8_t i = 0; i < 12; i++) {
-  Serial.print(cap.filteredData(i)); Serial.print("\t");
-  }
-  Serial.println();
-  Serial.print("Base: ");
-  for (uint8_t i = 0; i < 12; i++) {
-  Serial.print(cap.baselineData(i)); Serial.print("\t");
-  }
-  Serial.println();
-*/
-MidiUSB.flush(); //Refresca comunicacion USB HID MIDI
+  // comment out this line for detailed data from the sensor!
+  return;
+
+  // debugging info, what
+  /*
+    Serial.print("\t\t\t\t\t\t\t\t\t\t\t\t\t 0x"); Serial.println(cap.touched(), HEX);
+    Serial.print("Filt: ");
+    for (uint8_t i = 0; i < 12; i++) {
+    Serial.print(cap.filteredData(i)); Serial.print("\t");
+    }
+    Serial.println();
+    Serial.print("Base: ");
+    for (uint8_t i = 0; i < 12; i++) {
+    Serial.print(cap.baselineData(i)); Serial.print("\t");
+    }
+    Serial.println();
+  */
+  MidiUSB.flush(); //Refresca comunicacion USB HID MIDI
 
 
-// put a delay so it isn't overwhelming
-delay(100);
+  // put a delay so it isn't overwhelming
+  delay(100);
 
 }
 
